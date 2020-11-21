@@ -1,0 +1,1 @@
+export { TankIcon } from './TankIcon'
