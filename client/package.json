@@ -2,9 +2,11 @@
   "name": "tang-game-client",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "serve -s ."
+    "start": "webpack serve --config webpack.config.js",
+    "build": "webpack --config webpack.config.js",
+    "serve": "serve -s ."
   },
   "author": "Oleh Kutsenko",
   "license": "MIT",
@@ -12,6 +14,16 @@
     "serve": "^11.3.2"
   },
   "devDependencies": {
-    "prettier": "^2.1.2"
+    "@babel/core": "^7.12.9",
+    "@babel/preset-env": "^7.12.7",
+    "babel-loader": "^8.2.1",
+    "css-loader": "^5.0.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^4.5.0",
+    "prettier": "^2.1.2",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.6.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
   }
 }
