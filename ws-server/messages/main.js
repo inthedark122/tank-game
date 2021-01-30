@@ -1,10 +1,12 @@
 import { init } from './init.js'
 import { onMove } from './move.js'
 import { onclose } from './onclose.js'
+import { onShot } from './shot.js';
 
 const messageHandlers = {
   init,
-  move: onMove
+  move: onMove,
+  shot: onShot,
 }
 
 export function incoming(ws, broadcast) {

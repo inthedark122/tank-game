@@ -1,7 +1,7 @@
 const gridSize = 20
 
 export const tanks = {}
-export const bullets = []
+export let bullets = []
 
 function random() {
   return Math.floor(Math.random() * gridSize)
@@ -35,8 +35,26 @@ function canMove(tank, position) {
   }
 }
 
+function getTanksByCoordinate(x, y) {
+  return Object.values(tanks).filter((tank) => tank.x === x && tank.y === y)
+}
+
+function isCollision(coordinate) {
+  return (
+    Object.values(tanks).find(
+      (tank) => tank.x === coordinate.x && tank.y === coordinate.y
+    ) !== -1
+  )
+}
+
 export function addTank(tankId) {
-  tanks[tankId] = { tankId, x: random(), y: random(), position: 'right' }
+  let coordinate = { x: random(), y: random() }
+
+  while (!isCollision(coordinate)) {
+    coordinate = { x: random(), y: random() }
+  }
+
+  tanks[tankId] = { tankId, ...coordinate, position: 'right' }
 }
 
 export function addBullet(tankId) {
@@ -50,10 +68,47 @@ export function removeTank(tankId) {
 }
 
 export function moveTank(tankId, position) {
-  const tank = tanks[tankId];
+  const tank = tanks[tankId]
 
   if (canMove(tank, position)) {
-    tank.position = position;
-    Object.assign(tank, getNextPosition(tank));
+    tank.position = position
+    Object.assign(tank, getNextPosition(tank))
+  }
+}
+
+export function recalculateBullets() {
+  bullets = bullets.filter((bullet) => canMove(bullet, bullet.position))
+
+  bullets.forEach(function (bullet) {
+    Object.assign(bullet, getNextPosition(bullet))
+  })
+
+  const indexedToDelete = []
+  const tanksToDelete = []
+
+  bullets.forEach((bullet, index) => {
+    const tanks = getTanksByCoordinate(bullet.x, bullet.y).filter(
+      (tank) => tank.id !== bullet.tankId
+    )
+
+    if (tanks.length) {
+      indexedToDelete.push(index)
+      tanksToDelete.push(...tanks)
+    }
+  })
+
+  if (indexedToDelete.length) {
+    indexedToDelete.reverse().forEach((idx) => {
+      bullets.splice(idx, 1)
+    })
+  }
+
+  if (tanksToDelete.length) {
+    const uniqTanksToDelete = new Set(tanksToDelete.map((tank) => tank.tankId))
+
+    uniqTanksToDelete.forEach((tankId) => {
+      delete tanks[tankId]
+      addTank(tankId)
+    })
   }
 }
